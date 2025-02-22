@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -15,7 +16,7 @@ export const Map = ({ className }: MapProps) => {
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    mapboxgl.accessToken = 'YOUR_MAPBOX_TOKEN';
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGhhbGlhdmNoIiwiYSI6ImNtN2dqazg5dDA4dXYycm9qaGxtdWVkdHAifQ.miFSyd4ZFQmnRbkP69lD5A';
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
