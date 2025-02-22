@@ -11,6 +11,7 @@ interface MapProps {
 export const Map = ({ className }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
+  const rotationTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -50,10 +51,10 @@ export const Map = ({ className }: MapProps) => {
     let spinEnabled = true;
 
     function spinGlobe() {
-      if (!map.current) return;
+      if (!map.current || !spinEnabled || userInteracting) return;
       
       const zoom = map.current.getZoom();
-      if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
+      if (zoom < maxSpinZoom) {
         let distancePerSecond = 360 / secondsPerRevolution;
         if (zoom > slowSpinZoom) {
           const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
@@ -61,16 +62,33 @@ export const Map = ({ className }: MapProps) => {
         }
         const center = map.current.getCenter();
         center.lng -= distancePerSecond;
-        map.current.easeTo({ center, duration: 1000, easing: (n) => n });
+        
+        // Clear any existing timer
+        if (rotationTimer.current) {
+          window.clearTimeout(rotationTimer.current);
+        }
+        
+        // Schedule the next rotation
+        rotationTimer.current = window.setTimeout(() => {
+          if (map.current && !userInteracting) {
+            map.current.easeTo({ center, duration: 1000, easing: (n) => n });
+          }
+        }, 1000);
       }
     }
 
     map.current.on('mousedown', () => {
       userInteracting = true;
+      if (rotationTimer.current) {
+        window.clearTimeout(rotationTimer.current);
+      }
     });
     
     map.current.on('dragstart', () => {
       userInteracting = true;
+      if (rotationTimer.current) {
+        window.clearTimeout(rotationTimer.current);
+      }
     });
     
     map.current.on('mouseup', () => {
@@ -83,13 +101,15 @@ export const Map = ({ className }: MapProps) => {
       spinGlobe();
     });
 
-    map.current.on('moveend', () => {
-      spinGlobe();
-    });
+    map.current.on('moveend', spinGlobe);
 
+    // Start the initial rotation
     spinGlobe();
 
     return () => {
+      if (rotationTimer.current) {
+        window.clearTimeout(rotationTimer.current);
+      }
       map.current?.remove();
     };
   }, []);
