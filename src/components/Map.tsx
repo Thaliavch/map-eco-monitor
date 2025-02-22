@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -20,10 +19,10 @@ export const Map = ({ className }: MapProps) => {
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
-      projection: 'globe',
-      zoom: 1.5,
-      center: [30, 15],
+      style: 'mapbox://styles/mapbox/satellite-v9',
+      projection: 'mercator',
+      zoom: 11,
+      center: [-80.1738, 25.7617],
       pitch: 45,
     });
 
@@ -37,74 +36,23 @@ export const Map = ({ className }: MapProps) => {
     map.current.scrollZoom.disable();
 
     map.current.on('style.load', () => {
-      map.current?.setFog({
-        color: 'rgb(255, 255, 255)',
-        'high-color': 'rgb(200, 200, 225)',
-        'horizon-blend': 0.2,
-      });
+      map.current?.setMaxBounds([
+        [-80.3, 25.5],
+        [-80.0, 25.9]
+      ]);
     });
 
-    const secondsPerRevolution = 240;
-    const maxSpinZoom = 5;
-    const slowSpinZoom = 3;
-    let userInteracting = false;
-    let spinEnabled = true;
-
-    function spinGlobe() {
-      if (!map.current || !spinEnabled || userInteracting) return;
-      
-      const zoom = map.current.getZoom();
-      if (zoom < maxSpinZoom) {
-        let distancePerSecond = 360 / secondsPerRevolution;
-        if (zoom > slowSpinZoom) {
-          const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-          distancePerSecond *= zoomDif;
-        }
-        const center = map.current.getCenter();
-        center.lng -= distancePerSecond;
-        
-        // Clear any existing timer
-        if (rotationTimer.current) {
-          window.clearTimeout(rotationTimer.current);
-        }
-        
-        // Schedule the next rotation
-        rotationTimer.current = window.setTimeout(() => {
-          if (map.current && !userInteracting) {
-            map.current.easeTo({ center, duration: 1000, easing: (n) => n });
-          }
-        }, 1000);
-      }
-    }
-
     map.current.on('mousedown', () => {
-      userInteracting = true;
-      if (rotationTimer.current) {
-        window.clearTimeout(rotationTimer.current);
-      }
     });
     
     map.current.on('dragstart', () => {
-      userInteracting = true;
-      if (rotationTimer.current) {
-        window.clearTimeout(rotationTimer.current);
-      }
     });
     
     map.current.on('mouseup', () => {
-      userInteracting = false;
-      spinGlobe();
     });
     
     map.current.on('touchend', () => {
-      userInteracting = false;
-      spinGlobe();
     });
-
-    map.current.on('moveend', spinGlobe);
-
-    // Start the initial rotation
-    spinGlobe();
 
     return () => {
       if (rotationTimer.current) {
