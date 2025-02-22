@@ -37,22 +37,41 @@ export const Map = ({ className }: MapProps) => {
     map.current.scrollZoom.disable();
 
     map.current.on('style.load', () => {
+      // Add bounds to restrict the view to Biscayne Bay area
       map.current?.setMaxBounds([
-        [-80.3, 25.5],
-        [-80.0, 25.9]
+        [-80.3, 25.5], // Southwest coordinates
+        [-80.0, 25.9]  // Northeast coordinates
       ]);
-    });
 
-    map.current.on('mousedown', () => {
-    });
-    
-    map.current.on('dragstart', () => {
-    });
-    
-    map.current.on('mouseup', () => {
-    });
-    
-    map.current.on('touchend', () => {
+      // Add the Biscayne Bay polygon outline
+      map.current?.addSource('biscayne-bay', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [[
+              [-80.2, 25.6],
+              [-80.15, 25.65],
+              [-80.12, 25.75],
+              [-80.15, 25.85],
+              [-80.2, 25.8],
+              [-80.2, 25.6],
+            ]],
+          },
+        },
+      });
+
+      map.current?.addLayer({
+        id: 'bay-outline',
+        type: 'line',
+        source: 'biscayne-bay',
+        paint: {
+          'line-color': '#ffffff',
+          'line-width': 2,
+          'line-opacity': 0.8,
+        },
+      });
     });
 
     return () => {
