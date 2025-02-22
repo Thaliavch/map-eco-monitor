@@ -1,11 +1,10 @@
-
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 export function Header() {
   const location = useLocation();
-  
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-panel">
       <div className="container flex h-16 items-center">
@@ -17,16 +16,20 @@ export function Header() {
             to="/pollution"
             className={cn(
               "transition-colors hover:text-foreground/80",
-              location.pathname === "/pollution" ? "text-foreground" : "text-foreground/60"
+              location.pathname === "/pollution"
+                ? "text-foreground"
+                : "text-foreground/60"
             )}
           >
-            Pollution
+            Biscayne Bay
           </Link>
           <Link
             to="/deforestation"
             className={cn(
               "transition-colors hover:text-foreground/80",
-              location.pathname === "/deforestation" ? "text-foreground" : "text-foreground/60"
+              location.pathname === "/deforestation"
+                ? "text-foreground"
+                : "text-foreground/60"
             )}
           >
             Deforestation
