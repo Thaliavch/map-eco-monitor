@@ -26,7 +26,7 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
       style: "mapbox://styles/mapbox/satellite-v9",
       projection: "mercator",
       zoom: 11,
-      center: center || [-80.1738, 25.7617],
+      center: center || [-80.68623, 25.40478],
       pitch: 45,
     });
 
@@ -38,14 +38,14 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
     );
 
     map.current.on("style.load", () => {
-      // Add bounds to restrict the view to Biscayne Bay area
+      // Add bounds to restrict the view to Everglades areas
       map.current?.setMaxBounds([
-        [-80.3, 25.5], // Southwest coordinates
-        [-80.0, 25.9], // Northeast coordinates
+        [-80.8, 25.2], // Southwest coordinates
+        [-80.5, 25.6], // Northeast coordinates
       ]);
 
-      // Add the Biscayne Bay polygon outline
-      map.current?.addSource("biscayne-bay", {
+      // Add the Everglades Zone 1 polygon outline
+      map.current?.addSource("everglades-zone1", {
         type: "geojson",
         data: {
           type: "Feature",
@@ -53,21 +53,40 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
           geometry: {
             type: "Polygon",
             coordinates: [[
-              [-80.2, 25.6],
-              [-80.15, 25.65],
-              [-80.12, 25.75],
-              [-80.15, 25.85],
-              [-80.2, 25.8],
-              [-80.2, 25.6],
+              [-80.69623, 25.39478], // Create a polygon around the center point
+              [-80.67623, 25.39478],
+              [-80.67623, 25.41478],
+              [-80.69623, 25.41478],
+              [-80.69623, 25.39478],
             ]],
           },
         },
       });
 
+      // Add the Everglades Zone 2 polygon outline
+      map.current?.addSource("everglades-zone2", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "Polygon",
+            coordinates: [[
+              [-80.68623, 25.40478],
+              [-80.66623, 25.40478],
+              [-80.66623, 25.42478],
+              [-80.68623, 25.42478],
+              [-80.68623, 25.40478],
+            ]],
+          },
+        },
+      });
+
+      // Add layer for Zone 1
       map.current?.addLayer({
-        id: "bay-outline",
+        id: "zone1-outline",
         type: "line",
-        source: "biscayne-bay",
+        source: "everglades-zone1",
         paint: {
           "line-color": "#ffffff",
           "line-width": 2,
@@ -75,29 +94,37 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
         },
       });
 
-      // Add source for pollution data
-      map.current?.addSource("pollution-data", {
-        type: "geojson",
-        data: {
-          type: "FeatureCollection",
-          features: [],
+      // Add fill layer for Zone 1
+      map.current?.addLayer({
+        id: "zone1-fill",
+        type: "fill",
+        source: "everglades-zone1",
+        paint: {
+          "fill-color": "#ffffff",
+          "fill-opacity": 0.1,
         },
       });
 
-      // Add layer for pollution polygons
+      // Add layer for Zone 2
       map.current?.addLayer({
-        id: "pollution-layer",
-        type: "fill",
-        source: "pollution-data",
+        id: "zone2-outline",
+        type: "line",
+        source: "everglades-zone2",
         paint: {
-          "fill-color": [
-            "match",
-            ["get", "pollutantType"],
-            "oil_spills", "#8B0000",
-            "turbidity", "#CD853F",
-            "#00ff00" // default color (algae)
-          ],
-          "fill-opacity": 0.4,
+          "line-color": "#00ff00",
+          "line-width": 2,
+          "line-opacity": 0.8,
+        },
+      });
+
+      // Add fill layer for Zone 2
+      map.current?.addLayer({
+        id: "zone2-fill",
+        type: "fill",
+        source: "everglades-zone2",
+        paint: {
+          "fill-color": "#00ff00",
+          "fill-opacity": 0.1,
         },
       });
     });
