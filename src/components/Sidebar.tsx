@@ -1,10 +1,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon, Search } from "lucide-react";
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -104,8 +103,8 @@ export function Sidebar({ className, onSearch }: SidebarProps) {
                   <Calendar
                     initialFocus
                     mode="range"
-                    selected={{ from: dateRange.from, to: dateRange.to }}
-                    onSelect={setDateRange}
+                    selected={dateRange}
+                    onSelect={(range: any) => setDateRange(range)}
                     numberOfMonths={2}
                   />
                 </PopoverContent>

@@ -1,2 +1,2 @@
-export const MAPBLOX_TOKEN =
-  "pk.eyJ1IjoidGhhbGlhdmNoIiwiYSI6ImNtN2dqazg5dDA4dXYycm9qaGxtdWVkdHAifQ.miFSyd4ZFQmnRbkP69lD5A";
+
+export const MAPBOX_TOKEN = "pk.eyJ1IjoidGhhbGlhdmNoIiwiYSI6ImNtN2dqazg5dDA4dXYycm9qaGxtdWVkdHAifQ.miFSyd4ZFQmnRbkP69lD5A";

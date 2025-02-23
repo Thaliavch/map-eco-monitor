@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -16,7 +17,7 @@ export const Map = ({ className }: MapProps) => {
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    mapboxgl.accessToken = { MAPBOX_TOKEN };
+    mapboxgl.accessToken = MAPBOX_TOKEN;
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -48,6 +49,7 @@ export const Map = ({ className }: MapProps) => {
         type: "geojson",
         data: {
           type: "Feature",
+          properties: {},
           geometry: {
             type: "Polygon",
             coordinates: [
