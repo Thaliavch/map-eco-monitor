@@ -1,17 +1,19 @@
 # Eco Monitor Miami
 
-## Project info
-Our objective is to create a web-based monitoring platform that leverages machine learning, remote sensing, and data science techniques to help track and visualize the health of Miami’s ecosystems. From Biscayne Bay pollution to urban deforestation threats, Miami Eco-Watch provides an interactive dashboard for researchers, policymakers, and the public to better understand the region’s environmental challenges and protect the natural resources.
+## Project Info
+Our objective is to create a web-based monitoring platform that leverages **machine learning**, **remote sensing**, and **data science** techniques to help track and visualize the health of Miami’s ecosystems. From **Biscayne Bay pollution** to **urban deforestation** threats, **Eco Monitor Miami** provides an interactive dashboard for researchers, policymakers, and the public to better understand the region’s environmental challenges and protect natural resources.
 
-## 
+---
 
-Resource:
+## Resources
 
-Front End was built with Lovable: https://lovable.dev/
-Backend: Back-end service built with Flask to handle ML inference and data processing, exposed via ngrok for easy public access and demos.
+- **Front End**: Built with [Lovable](https://lovable.dev/)  
+- **Back End**: 
+  - **Flask** service for ML inference and data processing  
+  - Exposed via **ngrok** for easy public access and demos
 
-Deforestation and Pater Pollution Monitoring::
-https://github.com/opengeos/segment-geospatial/tree/main/samgeo
-https://dataspace.copernicus.eu/analyse/apis
-https://geemap.org/
-https://huggingface.co/Bluepearl/Random-Forest-Classification
+### Deforestation & Water Pollution Monitoring
+- [segment-geospatial (SAMGeo)](https://github.com/opengeos/segment-geospatial/tree/main/samgeo)  
+- [Copernicus Data Space APIs](https://dataspace.copernicus.eu/analyse/apis)  
+- [geemap](https://geemap.org/)  
+- [Hugging Face Random Forest Model](https://huggingface.co/Bluepearl/Random-Forest-Classification)
