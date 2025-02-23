@@ -26,7 +26,7 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
       style: "mapbox://styles/mapbox/satellite-v9",
       projection: "mercator",
       zoom: 11,
-      center: center || [-80.68623, 25.40478],
+      center: center || [-80.17, 25.77], // Biscayne Bay coordinates
       pitch: 45,
     });
 
@@ -38,95 +38,35 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
     );
 
     map.current.on("style.load", () => {
-      // Add bounds to restrict the view to Everglades areas
+      // Add bounds to restrict the view to Biscayne Bay area
       map.current?.setMaxBounds([
-        [-80.8, 25.2], // Southwest coordinates
-        [-80.5, 25.6], // Northeast coordinates
+        [-80.25, 25.70], // Southwest coordinates for Biscayne Bay
+        [-80.10, 25.85], // Northeast coordinates for Biscayne Bay
       ]);
 
-      // Add the Everglades Zone 1 polygon outline
-      map.current?.addSource("everglades-zone1", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            type: "Polygon",
-            coordinates: [[
-              [-80.69623, 25.39478], // Create a polygon around the center point
-              [-80.67623, 25.39478],
-              [-80.67623, 25.41478],
-              [-80.69623, 25.41478],
-              [-80.69623, 25.39478],
-            ]],
+      if (!map.current?.getSource("pollution-data") && pollutionData) {
+        map.current?.addSource("pollution-data", {
+          type: "geojson",
+          data: pollutionData,
+        });
+
+        map.current?.addLayer({
+          id: "pollution-fill",
+          type: "fill",
+          source: "pollution-data",
+          paint: {
+            "fill-color": [
+              "match",
+              ["get", "pollutantType"],
+              "algal_blooms", "rgba(0, 255, 0, 0.5)",
+              "oil_spills", "rgba(255, 0, 0, 0.5)",
+              "turbidity", "rgba(255, 255, 0, 0.5)",
+              "rgba(0, 0, 255, 0.5)",
+            ],
+            "fill-opacity": ["get", "intensity"],
           },
-        },
-      });
-
-      // Add the Everglades Zone 2 polygon outline
-      map.current?.addSource("everglades-zone2", {
-        type: "geojson",
-        data: {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            type: "Polygon",
-            coordinates: [[
-              [-80.68623, 25.40478],
-              [-80.66623, 25.40478],
-              [-80.66623, 25.42478],
-              [-80.68623, 25.42478],
-              [-80.68623, 25.40478],
-            ]],
-          },
-        },
-      });
-
-      // Add layer for Zone 1
-      map.current?.addLayer({
-        id: "zone1-outline",
-        type: "line",
-        source: "everglades-zone1",
-        paint: {
-          "line-color": "#ffffff",
-          "line-width": 2,
-          "line-opacity": 0.8,
-        },
-      });
-
-      // Add fill layer for Zone 1
-      map.current?.addLayer({
-        id: "zone1-fill",
-        type: "fill",
-        source: "everglades-zone1",
-        paint: {
-          "fill-color": "#ffffff",
-          "fill-opacity": 0.1,
-        },
-      });
-
-      // Add layer for Zone 2
-      map.current?.addLayer({
-        id: "zone2-outline",
-        type: "line",
-        source: "everglades-zone2",
-        paint: {
-          "line-color": "#00ff00",
-          "line-width": 2,
-          "line-opacity": 0.8,
-        },
-      });
-
-      // Add fill layer for Zone 2
-      map.current?.addLayer({
-        id: "zone2-fill",
-        type: "fill",
-        source: "everglades-zone2",
-        paint: {
-          "fill-color": "#00ff00",
-          "fill-opacity": 0.1,
-        },
-      });
+        });
+      }
     });
 
     return () => {
@@ -146,7 +86,34 @@ export const Map = ({ className, pollutionData, pollutantType, center }: MapProp
 
   // Update pollution data when it changes
   useEffect(() => {
-    if (map.current && map.current.getSource("pollution-data") && pollutionData) {
+    if (map.current && pollutionData) {
+      if (!map.current.getSource("pollution-data")) {
+        map.current.addSource("pollution-data", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: [],
+          },
+        });
+
+        map.current.addLayer({
+          id: "pollution-fill",
+          type: "fill",
+          source: "pollution-data",
+          paint: {
+            "fill-color": [
+              "match",
+              ["get", "pollutantType"],
+              "algal_blooms", "rgba(0, 255, 0, 0.5)",
+              "oil_spills", "rgba(255, 0, 0, 0.5)",
+              "turbidity", "rgba(255, 255, 0, 0.5)",
+              "rgba(0, 0, 255, 0.5)",
+            ],
+            "fill-opacity": ["get", "intensity"],
+          },
+        });
+      }
+
       const enhancedData = {
         ...pollutionData,
         features: pollutionData.features.map(feature => ({
