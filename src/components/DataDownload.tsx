@@ -34,9 +34,12 @@ export const DataDownload = ({ data }: DataDownloadProps) => {
       case 'csv':
         content = 'Latitude,Longitude,Intensity\n' +
           data.features.map(feature => {
-            const coords = feature.geometry.coordinates[0][0];
-            return `${coords[1]},${coords[0]},${feature.properties?.intensity || ''}`;
-          }).join('\n');
+            if (feature.geometry.type === "Polygon") {
+              const coords = feature.geometry.coordinates[0][0];
+              return `${coords[1]},${coords[0]},${feature.properties?.intensity || ''}`;
+            }
+            return '';
+          }).filter(Boolean).join('\n');
         fileName += '.csv';
         mimeType = 'text/csv';
         break;
