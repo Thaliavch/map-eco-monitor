@@ -3,9 +3,11 @@ import { Header } from "@/components/Header";
 import { Map } from "@/components/Map";
 import { Sidebar } from "@/components/Sidebar";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 export default function PollutionMonitor() {
   const { toast } = useToast();
+  const [algaeImage, setAlgaeImage] = useState<string | null>(null);
 
   const handleSearch = async (filters: {
     dateRange: { from: Date | undefined; to: Date | undefined };
@@ -21,13 +23,10 @@ export default function PollutionMonitor() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Access-Control-Allow-Origin': '*',
           },
-          mode: 'cors',
           body: JSON.stringify({
             date: filters.dateRange.from ? filters.dateRange.from.toISOString() : new Date().toISOString(),
-            location: filters.location || { lat: 25.7617, lng: -80.1738 }, // Default to Biscayne Bay center if no location
+            location: filters.location || { lat: 25.7617, lng: -80.1738 },
             radius: filters.radius
           }),
         });
@@ -36,16 +35,18 @@ export default function PollutionMonitor() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const imageData = await response.text();
-        console.log('Received image data:', imageData.substring(0, 100) + '...');
+        const data = await response.json();
+        console.log('Received response:', data);
         
-        // Add the image to the map (we'll need to implement this part)
-        // TODO: Implement image overlay on map
-        
-        toast({
-          title: "Algae Bloom Data Retrieved",
-          description: "Successfully fetched algae bloom detection data.",
-        });
+        if (data.image) {
+          setAlgaeImage(data.image);
+          toast({
+            title: "Algae Bloom Data Retrieved",
+            description: "Successfully fetched algae bloom detection data.",
+          });
+        } else {
+          throw new Error('No image data received');
+        }
       } catch (error) {
         console.error('Error fetching algae bloom data:', error);
         toast({
@@ -71,6 +72,16 @@ export default function PollutionMonitor() {
           <div className="glass-panel rounded-lg p-4 h-full animate-in">
             <h1 className="text-2xl font-semibold mb-4">Biscayne Bay Pollution Monitor</h1>
             <Map />
+            {algaeImage && (
+              <div className="fixed bottom-4 right-4 p-2 bg-white rounded-lg shadow-lg">
+                <p className="text-sm font-medium mb-2">Algae Bloom Detection Result</p>
+                <img 
+                  src={`data:image/png;base64,${algaeImage}`} 
+                  alt="Algae bloom detection"
+                  className="max-w-[300px] h-auto rounded"
+                />
+              </div>
+            )}
           </div>
         </main>
       </div>
