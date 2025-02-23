@@ -1,6 +1,6 @@
 
 import { Card } from "@/components/ui/card";
-import { ChartBarIcon, TreeIcon } from "lucide-react";
+import { ChartBarIcon, TreesIcon } from "lucide-react";
 
 interface SummaryProps {
   volume?: "High" | "Medium" | "Low";
@@ -24,7 +24,7 @@ export const Summary = ({ volume = "Low", treeCount = 0 }: SummaryProps) => {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <TreeIcon className="h-5 w-5" />
+          <TreesIcon className="h-5 w-5" />
           <span className="font-medium">Approximate Tree Count:</span>
           <span className="font-bold">{treeCount.toLocaleString()}</span>
         </div>

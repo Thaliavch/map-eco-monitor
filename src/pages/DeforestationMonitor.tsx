@@ -1,4 +1,3 @@
-
 import { Header } from "@/components/Header";
 import { Map } from "@/components/Map";
 import { useState } from "react";
@@ -32,7 +31,6 @@ export default function DeforestationMonitor() {
     to: undefined,
   });
   
-  // Mock analysis results
   const [analysisResults, setAnalysisResults] = useState<{
     volume: "High" | "Medium" | "Low";
     treeCount: number;
@@ -41,7 +39,6 @@ export default function DeforestationMonitor() {
     treeCount: 0,
   });
   
-  // Comparison dates
   const [comparisonDates, setComparisonDates] = useState<{
     first: Date | undefined;
     second: Date | undefined;
@@ -50,12 +47,13 @@ export default function DeforestationMonitor() {
     second: undefined,
   });
 
+  const [compareArea, setCompareArea] = useState<string>("");
+
   const handleAnalyze = () => {
     toast({
       title: "Analysis Started",
       description: "Analyzing deforestation data for the selected area and dates...",
     });
-    // Mock analysis results
     setAnalysisResults({
       volume: ["High", "Medium", "Low"][Math.floor(Math.random() * 3)] as "High" | "Medium" | "Low",
       treeCount: Math.floor(Math.random() * 10000),
@@ -64,16 +62,24 @@ export default function DeforestationMonitor() {
   };
 
   const handleCompare = () => {
+    if (!compareArea) {
+      toast({
+        title: "Area Required",
+        description: "Please select an area to compare.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Comparison Started",
       description: "Comparing deforestation data between selected dates...",
     });
-    // Mock comparison results
     setAnalysisResults({
       volume: ["High", "Medium", "Low"][Math.floor(Math.random() * 3)] as "High" | "Medium" | "Low",
       treeCount: Math.floor(Math.random() * 10000),
     });
-    console.log("Comparing dates:", comparisonDates);
+    console.log("Comparing dates:", { compareArea, comparisonDates });
   };
 
   return (
@@ -174,6 +180,22 @@ export default function DeforestationMonitor() {
 
                 <TabsContent value="compare" className="space-y-4">
                   <div className="space-y-2">
+                    <Label>Area</Label>
+                    <Select value={compareArea} onValueChange={setCompareArea}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select area" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {AREAS.map((area) => (
+                          <SelectItem key={area.id} value={area.id}>
+                            {area.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
                     <Label>First Date</Label>
                     <Popover>
                       <PopoverTrigger asChild>
@@ -235,7 +257,11 @@ export default function DeforestationMonitor() {
                     </Popover>
                   </div>
 
-                  <Button className="w-full" onClick={handleCompare}>
+                  <Button 
+                    className="w-full" 
+                    onClick={handleCompare}
+                    disabled={!compareArea || !comparisonDates.first || !comparisonDates.second}
+                  >
                     Compare Dates
                   </Button>
                 </TabsContent>
@@ -253,7 +279,11 @@ export default function DeforestationMonitor() {
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
               <div className="lg:col-span-3">
                 <Map
-                  center={selectedArea ? AREAS.find(a => a.id === selectedArea)?.coordinates : undefined}
+                  center={
+                    (selectedArea || compareArea) 
+                      ? AREAS.find(a => a.id === (selectedArea || compareArea))?.coordinates 
+                      : undefined
+                  }
                   className="w-full h-[calc(100vh-12rem)]"
                 />
               </div>
