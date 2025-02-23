@@ -9,9 +9,10 @@ interface MapProps {
   className?: string;
   pollutionData?: GeoJSON.FeatureCollection;
   pollutantType?: string;
+  center?: [number, number];
 }
 
-export const Map = ({ className, pollutionData, pollutantType }: MapProps) => {
+export const Map = ({ className, pollutionData, pollutantType, center }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
 
@@ -25,7 +26,7 @@ export const Map = ({ className, pollutionData, pollutantType }: MapProps) => {
       style: "mapbox://styles/mapbox/satellite-v9",
       projection: "mercator",
       zoom: 11,
-      center: [-80.1738, 25.7617],
+      center: center || [-80.1738, 25.7617],
       pitch: 45,
     });
 
@@ -105,6 +106,16 @@ export const Map = ({ className, pollutionData, pollutantType }: MapProps) => {
       map.current?.remove();
     };
   }, []);
+
+  // Update center when it changes
+  useEffect(() => {
+    if (map.current && center) {
+      map.current.flyTo({
+        center: center,
+        essential: true
+      });
+    }
+  }, [center]);
 
   // Update pollution data when it changes
   useEffect(() => {
