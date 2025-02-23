@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, Terminal, Navigation, Tree } from "lucide-react";
+import { Menu, Terminal, Navigation, Trees } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
@@ -70,7 +70,7 @@ export function Header() {
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <a href="https://www.globalforestwatch.org/dashboards/country/USA/7/FLA/" target="_blank" rel="noopener noreferrer" className="flex items-center">
-                <Tree className="mr-2 h-4 w-4" />
+                <Trees className="mr-2 h-4 w-4" />
                 Miami Forest Watch
               </a>
             </DropdownMenuItem>
