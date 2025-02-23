@@ -1,9 +1,9 @@
-
 import { Header } from "@/components/Header";
 import { Map } from "@/components/Map";
 import { Sidebar } from "@/components/Sidebar";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
+import { DataDownload } from "@/components/DataDownload";
 
 // Mock algae bloom data for demonstration
 const MOCK_ALGAE_BLOOMS: GeoJSON.FeatureCollection = {
@@ -87,7 +87,10 @@ export default function PollutionMonitor() {
         <Sidebar onSearch={handleSearch} />
         <main className="flex-1 p-4">
           <div className="glass-panel rounded-lg p-4 h-full animate-in">
-            <h1 className="text-2xl font-semibold mb-4">Biscayne Bay Pollution Monitor</h1>
+            <div className="flex justify-between items-center mb-4">
+              <h1 className="text-2xl font-semibold">Biscayne Bay Pollution Monitor</h1>
+              <DataDownload data={algaeBloomData} />
+            </div>
             <Map algaeBloomData={algaeBloomData} />
           </div>
         </main>
