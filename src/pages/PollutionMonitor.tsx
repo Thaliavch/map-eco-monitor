@@ -21,16 +21,26 @@ export default function PollutionMonitor() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Access-Control-Allow-Origin': '*',
           },
-          body: JSON.stringify({}),
+          mode: 'cors',
+          body: JSON.stringify({
+            date: filters.dateRange.from ? filters.dateRange.from.toISOString() : new Date().toISOString(),
+            location: filters.location || { lat: 25.7617, lng: -80.1738 }, // Default to Biscayne Bay center if no location
+            radius: filters.radius
+          }),
         });
 
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const imageData = await response.text();
         console.log('Received image data:', imageData.substring(0, 100) + '...');
+        
+        // Add the image to the map (we'll need to implement this part)
+        // TODO: Implement image overlay on map
         
         toast({
           title: "Algae Bloom Data Retrieved",
@@ -40,7 +50,7 @@ export default function PollutionMonitor() {
         console.error('Error fetching algae bloom data:', error);
         toast({
           title: "Error",
-          description: "Failed to fetch algae bloom data. Please try again.",
+          description: "Failed to fetch algae bloom data. The service might be temporarily unavailable.",
           variant: "destructive",
         });
       }
