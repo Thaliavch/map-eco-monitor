@@ -12,6 +12,8 @@ import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Summary } from "@/components/Summary";
+import { DataDownload } from "@/components/DataDownload";
 
 const AREAS = [
   { id: "everglades1", name: "Everglades Zone 1", coordinates: [-80.68623, 25.40478] as [number, number] },
@@ -30,6 +32,15 @@ export default function DeforestationMonitor() {
     to: undefined,
   });
   
+  // Mock analysis results
+  const [analysisResults, setAnalysisResults] = useState<{
+    volume: "High" | "Medium" | "Low";
+    treeCount: number;
+  }>({
+    volume: "Low",
+    treeCount: 0,
+  });
+  
   // Comparison dates
   const [comparisonDates, setComparisonDates] = useState<{
     first: Date | undefined;
@@ -44,7 +55,11 @@ export default function DeforestationMonitor() {
       title: "Analysis Started",
       description: "Analyzing deforestation data for the selected area and dates...",
     });
-    // Here we would typically make an API call with the selected parameters
+    // Mock analysis results
+    setAnalysisResults({
+      volume: ["High", "Medium", "Low"][Math.floor(Math.random() * 3)] as "High" | "Medium" | "Low",
+      treeCount: Math.floor(Math.random() * 10000),
+    });
     console.log("Analyzing with params:", { selectedArea, dateRange });
   };
 
@@ -53,7 +68,11 @@ export default function DeforestationMonitor() {
       title: "Comparison Started",
       description: "Comparing deforestation data between selected dates...",
     });
-    // Here we would typically make an API call with the comparison dates
+    // Mock comparison results
+    setAnalysisResults({
+      volume: ["High", "Medium", "Low"][Math.floor(Math.random() * 3)] as "High" | "Medium" | "Low",
+      treeCount: Math.floor(Math.random() * 10000),
+    });
     console.log("Comparing dates:", comparisonDates);
   };
 
@@ -227,11 +246,24 @@ export default function DeforestationMonitor() {
 
         <main className="flex-1 p-4">
           <div className="glass-panel rounded-lg p-4 h-full animate-in">
-            <h1 className="text-2xl font-semibold mb-4">Deforestation Monitor</h1>
-            <Map
-              center={selectedArea ? AREAS.find(a => a.id === selectedArea)?.coordinates : undefined}
-              className="w-full h-[calc(100vh-8rem)]"
-            />
+            <div className="flex justify-between items-start mb-4">
+              <h1 className="text-2xl font-semibold">Deforestation Monitor</h1>
+              <DataDownload />
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+              <div className="lg:col-span-3">
+                <Map
+                  center={selectedArea ? AREAS.find(a => a.id === selectedArea)?.coordinates : undefined}
+                  className="w-full h-[calc(100vh-12rem)]"
+                />
+              </div>
+              <div className="space-y-4">
+                <Summary 
+                  volume={analysisResults.volume}
+                  treeCount={analysisResults.treeCount}
+                />
+              </div>
+            </div>
           </div>
         </main>
       </div>
