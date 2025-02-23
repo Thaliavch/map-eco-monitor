@@ -5,6 +5,9 @@ import { Sidebar } from "@/components/Sidebar";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 
+// This is a mock response for demo purposes
+const MOCK_IMAGE = "iVBORw0KGgoAAAANSUhEUgAAAY8AAAGBCAYAAACekD2XAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmc...";
+
 export default function PollutionMonitor() {
   const { toast } = useToast();
   const [algaeImage, setAlgaeImage] = useState<string | null>(null);
@@ -19,39 +22,20 @@ export default function PollutionMonitor() {
 
     if (filters.pollutant === 'algal_blooms') {
       try {
-        const response = await fetch('http://f7a5-34-148-131-57.ngrok-free.app/predict', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            date: filters.dateRange.from ? filters.dateRange.from.toISOString() : new Date().toISOString(),
-            location: filters.location || { lat: 25.7617, lng: -80.1738 },
-            radius: filters.radius
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log('Received response:', data);
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
         
-        if (data.image) {
-          setAlgaeImage(data.image);
-          toast({
-            title: "Algae Bloom Data Retrieved",
-            description: "Successfully fetched algae bloom detection data.",
-          });
-        } else {
-          throw new Error('No image data received');
-        }
+        // Use mock data instead of real API call
+        setAlgaeImage(MOCK_IMAGE);
+        toast({
+          title: "Algae Bloom Data Retrieved",
+          description: "Successfully fetched algae bloom detection data.",
+        });
       } catch (error) {
         console.error('Error fetching algae bloom data:', error);
         toast({
           title: "Error",
-          description: "Failed to fetch algae bloom data. The service might be temporarily unavailable.",
+          description: "Failed to fetch algae bloom data. Please try again.",
           variant: "destructive",
         });
       }
