@@ -5,12 +5,44 @@ import { Sidebar } from "@/components/Sidebar";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 
-// This is a mock response for demo purposes
-const MOCK_IMAGE = "iVBORw0KGgoAAAANSUhEUgAAAY8AAAGBCAYAAACekD2XAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjEwLjAsIGh0dHBzOi8vbWF0cGxvdGxpYi5vcmc...";
+// Mock algae bloom data for demonstration
+const MOCK_ALGAE_BLOOMS: GeoJSON.FeatureCollection = {
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      properties: { intensity: 0.8 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [-80.18, 25.77],
+          [-80.17, 25.77],
+          [-80.17, 25.78],
+          [-80.18, 25.78],
+          [-80.18, 25.77]
+        ]]
+      }
+    },
+    {
+      type: "Feature",
+      properties: { intensity: 0.6 },
+      geometry: {
+        type: "Polygon",
+        coordinates: [[
+          [-80.16, 25.75],
+          [-80.15, 25.75],
+          [-80.15, 25.76],
+          [-80.16, 25.76],
+          [-80.16, 25.75]
+        ]]
+      }
+    }
+  ]
+};
 
 export default function PollutionMonitor() {
   const { toast } = useToast();
-  const [algaeImage, setAlgaeImage] = useState<string | null>(null);
+  const [algaeBloomData, setAlgaeBloomData] = useState<GeoJSON.FeatureCollection | undefined>(undefined);
 
   const handleSearch = async (filters: {
     dateRange: { from: Date | undefined; to: Date | undefined };
@@ -26,7 +58,7 @@ export default function PollutionMonitor() {
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Use mock data instead of real API call
-        setAlgaeImage(MOCK_IMAGE);
+        setAlgaeBloomData(MOCK_ALGAE_BLOOMS);
         toast({
           title: "Algae Bloom Data Retrieved",
           description: "Successfully fetched algae bloom detection data.",
@@ -40,6 +72,7 @@ export default function PollutionMonitor() {
         });
       }
     } else {
+      setAlgaeBloomData(undefined);
       toast({
         title: "Filters Applied",
         description: "Updating pollution data for Biscayne Bay...",
@@ -55,17 +88,7 @@ export default function PollutionMonitor() {
         <main className="flex-1 p-4">
           <div className="glass-panel rounded-lg p-4 h-full animate-in">
             <h1 className="text-2xl font-semibold mb-4">Biscayne Bay Pollution Monitor</h1>
-            <Map />
-            {algaeImage && (
-              <div className="fixed bottom-4 right-4 p-2 bg-white rounded-lg shadow-lg">
-                <p className="text-sm font-medium mb-2">Algae Bloom Detection Result</p>
-                <img 
-                  src={`data:image/png;base64,${algaeImage}`} 
-                  alt="Algae bloom detection"
-                  className="max-w-[300px] h-auto rounded"
-                />
-              </div>
-            )}
+            <Map algaeBloomData={algaeBloomData} />
           </div>
         </main>
       </div>

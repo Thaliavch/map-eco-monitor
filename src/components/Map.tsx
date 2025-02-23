@@ -7,9 +7,10 @@ import { MAPBOX_TOKEN } from "@/_token";
 
 interface MapProps {
   className?: string;
+  algaeBloomData?: GeoJSON.FeatureCollection;
 }
 
-export const Map = ({ className }: MapProps) => {
+export const Map = ({ className, algaeBloomData }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const rotationTimer = useRef<number | null>(null);
@@ -76,6 +77,27 @@ export const Map = ({ className }: MapProps) => {
           "line-opacity": 0.8,
         },
       });
+
+      // Add source for algae bloom data
+      map.current?.addSource("algae-blooms", {
+        type: "geojson",
+        data: {
+          type: "FeatureCollection",
+          features: [],
+        },
+      });
+
+      // Add layer for algae bloom polygons
+      map.current?.addLayer({
+        id: "algae-blooms-layer",
+        type: "fill",
+        source: "algae-blooms",
+        paint: {
+          "fill-color": "#00ff00",
+          "fill-opacity": 0.4,
+          "fill-outline-color": "#00ff00",
+        },
+      });
     });
 
     return () => {
@@ -85,6 +107,13 @@ export const Map = ({ className }: MapProps) => {
       map.current?.remove();
     };
   }, []);
+
+  // Update algae bloom data when it changes
+  useEffect(() => {
+    if (map.current && map.current.getSource("algae-blooms") && algaeBloomData) {
+      (map.current.getSource("algae-blooms") as mapboxgl.GeoJSONSource).setData(algaeBloomData);
+    }
+  }, [algaeBloomData]);
 
   return (
     <div className={cn("relative w-full h-[calc(100vh-4rem)]", className)}>
