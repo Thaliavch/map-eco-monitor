@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { cn } from "@/lib/utils";
-import { MAPBOX_TOKEN } from "_token.js";
+import { MAPBOX_TOKEN } from "@/_token";
 
 interface MapProps {
   className?: string;
@@ -16,8 +16,7 @@ export const Map = ({ className }: MapProps) => {
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoidGhhbGlhdmNoIiwiYSI6ImNtN2dqazg5dDA4dXYycm9qaGxtdWVkdHAifQ.miFSyd4ZFQmnRbkP69lD5A";
+    mapboxgl.accessToken = { MAPBOX_TOKEN };
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
