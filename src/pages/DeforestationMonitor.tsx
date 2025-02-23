@@ -14,8 +14,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AREAS = [
-  { id: "everglades1", name: "Everglades Zone 1", coordinates: [25.40478, -80.68623] },
-  { id: "everglades2", name: "Everglades Zone 2", coordinates: [25.41478, -80.67623] },
+  { id: "everglades1", name: "Everglades Zone 1", coordinates: [-80.68623, 25.40478] as [number, number] },
+  { id: "everglades2", name: "Everglades Zone 2", coordinates: [-80.67623, 25.41478] as [number, number] },
 ];
 
 export default function DeforestationMonitor() {
