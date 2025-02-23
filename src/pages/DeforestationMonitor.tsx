@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Summary } from "@/components/Summary";
 import { DataDownload } from "@/components/DataDownload";
+import { DeforestationMap } from "@/components/DeforestationMap";
 
 const AREAS = [
   { id: "everglades1", name: "Everglades Zone 1", coordinates: [-80.68623, 25.40478] as [number, number] },
@@ -278,7 +279,7 @@ export default function DeforestationMonitor() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
               <div className="lg:col-span-3">
-                <Map
+                <DeforestationMap
                   center={
                     (selectedArea || compareArea) 
                       ? AREAS.find(a => a.id === (selectedArea || compareArea))?.coordinates 
