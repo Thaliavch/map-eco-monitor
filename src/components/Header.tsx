@@ -6,9 +6,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, Terminal } from "lucide-react";
+import { Menu, Terminal, Navigation, Tree } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
@@ -59,6 +60,19 @@ export function Header() {
                 <Terminal className="mr-2 h-4 w-4" />
                 Environment
               </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <a href="https://www.marinetraffic.com" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                <Navigation className="mr-2 h-4 w-4" />
+                AIS Hub
+              </a>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <a href="https://www.globalforestwatch.org/dashboards/country/USA/7/FLA/" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                <Tree className="mr-2 h-4 w-4" />
+                Miami Forest Watch
+              </a>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

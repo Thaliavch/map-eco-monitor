@@ -7,13 +7,13 @@ import { MAPBOX_TOKEN } from "@/_token";
 
 interface MapProps {
   className?: string;
-  algaeBloomData?: GeoJSON.FeatureCollection;
+  pollutionData?: GeoJSON.FeatureCollection;
+  pollutantType?: string;
 }
 
-export const Map = ({ className, algaeBloomData }: MapProps) => {
+export const Map = ({ className, pollutionData, pollutantType }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const rotationTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -36,8 +36,6 @@ export const Map = ({ className, algaeBloomData }: MapProps) => {
       "top-right"
     );
 
-    map.current.scrollZoom.disable();
-
     map.current.on("style.load", () => {
       // Add bounds to restrict the view to Biscayne Bay area
       map.current?.setMaxBounds([
@@ -53,16 +51,14 @@ export const Map = ({ className, algaeBloomData }: MapProps) => {
           properties: {},
           geometry: {
             type: "Polygon",
-            coordinates: [
-              [
-                [-80.2, 25.6],
-                [-80.15, 25.65],
-                [-80.12, 25.75],
-                [-80.15, 25.85],
-                [-80.2, 25.8],
-                [-80.2, 25.6],
-              ],
-            ],
+            coordinates: [[
+              [-80.2, 25.6],
+              [-80.15, 25.65],
+              [-80.12, 25.75],
+              [-80.15, 25.85],
+              [-80.2, 25.8],
+              [-80.2, 25.6],
+            ]],
           },
         },
       });
@@ -78,8 +74,8 @@ export const Map = ({ className, algaeBloomData }: MapProps) => {
         },
       });
 
-      // Add source for algae bloom data
-      map.current?.addSource("algae-blooms", {
+      // Add source for pollution data
+      map.current?.addSource("pollution-data", {
         type: "geojson",
         data: {
           type: "FeatureCollection",
@@ -87,33 +83,45 @@ export const Map = ({ className, algaeBloomData }: MapProps) => {
         },
       });
 
-      // Add layer for algae bloom polygons
+      // Add layer for pollution polygons
       map.current?.addLayer({
-        id: "algae-blooms-layer",
+        id: "pollution-layer",
         type: "fill",
-        source: "algae-blooms",
+        source: "pollution-data",
         paint: {
-          "fill-color": "#00ff00",
+          "fill-color": [
+            "match",
+            ["get", "pollutantType"],
+            "oil_spills", "#8B0000",
+            "turbidity", "#CD853F",
+            "#00ff00" // default color (algae)
+          ],
           "fill-opacity": 0.4,
-          "fill-outline-color": "#00ff00",
         },
       });
     });
 
     return () => {
-      if (rotationTimer.current) {
-        window.clearTimeout(rotationTimer.current);
-      }
       map.current?.remove();
     };
   }, []);
 
-  // Update algae bloom data when it changes
+  // Update pollution data when it changes
   useEffect(() => {
-    if (map.current && map.current.getSource("algae-blooms") && algaeBloomData) {
-      (map.current.getSource("algae-blooms") as mapboxgl.GeoJSONSource).setData(algaeBloomData);
+    if (map.current && map.current.getSource("pollution-data") && pollutionData) {
+      const enhancedData = {
+        ...pollutionData,
+        features: pollutionData.features.map(feature => ({
+          ...feature,
+          properties: {
+            ...feature.properties,
+            pollutantType: pollutantType
+          }
+        }))
+      };
+      (map.current.getSource("pollution-data") as mapboxgl.GeoJSONSource).setData(enhancedData);
     }
-  }, [algaeBloomData]);
+  }, [pollutionData, pollutantType]);
 
   return (
     <div className={cn("relative w-full h-[calc(100vh-4rem)]", className)}>
