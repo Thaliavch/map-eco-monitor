@@ -3,6 +3,10 @@
 ## Project Info
 Our objective is to create a web-based monitoring platform that leverages **machine learning**, **remote sensing**, and **data science** techniques to help track and visualize the health of Miami’s ecosystems. From **Biscayne Bay pollution** to **urban deforestation** threats, **Eco Monitor Miami** provides an interactive dashboard for researchers, policymakers, and the public to better understand the region’s environmental challenges and protect natural resources.
 
+## Current Integration
+1. **Implementation of SamGeo** for semantic segmentation of trees, allowing users to specify a location of interest.  
+2. **Comparison of tree coverage** between two geographical locations by computing pixel resolution and identifying differences.
+
 ---
 
 ## Resources
